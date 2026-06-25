@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Owner Dashboard — {{ name }}{% endblock %}
+{% block body %}
+<nav class="page-nav">
+  <div class="page-nav-inner">
+    <a href="{% url 'home' %}" class="flex items-center gap-3 text-white font-bold"><span class="ak-logo">{{ logo_text }}</span><span>Dashboard</span></a>
+    <div class="flex items-center gap-3 text-sm">
+      <a href="{% url 'home' %}" class="glass-button">View Site</a>
+      <a href="{% url 'dashboard_logout' %}" class="glass-button">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page-shell">
+  <div class="page-container">
+    <section class="grid lg:grid-cols-[1.1fr_.9fr] gap-8 items-end mb-12">
+      <div>
+        <p class="page-kicker">Owner Control Panel</p>
+        <h1 class="page-title">Manage portfolio content with confidence.</h1>
+        <p class="page-subtitle">Update profile text, projects, features, repository activity and writing links from one clean dashboard. The public site updates dynamically from your saved data.</p>
+      </div>
+      <div class="dashboard-owner-card glass-card">
+        <div class="dashboard-owner-top">
+          <div class="dashboard-profile-mark">{{ logo_text }}</div>
+          <div>
+            <p>Signed in as owner</p>
+            <h3>{{ name }}</h3>
+            <small>{{ title }}</small>
+          </div>
+        </div>
+        <div class="dashboard-action-grid">
+          <a href="{% url 'profile_update' %}" class="primary-cta compact">Update Profile Content</a>
+          <a href="{% url 'project_create' %}" class="glass-button">+ Add Project</a>
+          <a href="{% url 'post_create' %}" class="glass-button">+ Add Writing Link</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-14">
+      <div class="section-heading flex-heading compact !mb-6">
+        <div><span>Projects</span><h2>{{ projects|length }} tracked item(s)</h2></div>
+      </div>
+      {% if projects %}
+      <div class="grid gap-5">
+        {% for project in projects %}
+        <div class="dashboard-list-card glass-card">
+          <div class="min-w-0 flex gap-5 items-start">
+            <div class="dashboard-index">{{ forloop.counter }}</div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-3 flex-wrap mb-2">
+                <a href="{% url 'project_detail' project.slug %}" class="dashboard-item-title">{{ project.name }}</a>
+                <span class="status-pill">{{ project.get_status_display }}</span>
+                {% if project.project_type %}<span class="type-pill">{{ project.project_type }}</span>{% endif %}
+              </div>
+              <p class="text-paper/70 leading-relaxed text-sm">{{ project.short_desc }}</p>
+              <div class="tag-list">{% for tag in project.tag_list %}<em>{{ tag }}</em>{% endfor %}</div>
+              {% if project.last_commit_message %}<div class="commit-chip max-w-3xl">last commit: {{ project.last_commit_message }}{% if project.last_commit_hash %} · {{ project.last_commit_hash }}{% endif %}</div>{% endif %}
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3 justify-start lg:justify-end">
+            <a href="{% url 'project_update' project.slug %}" class="glass-button">Edit</a>
+            {% if project.repo_url %}<a href="{% url 'project_sync_commit' project.slug %}" class="secondary-small">Sync commit</a>{% endif %}
+            <a href="{% url 'project_delete' project.slug %}" class="danger-button">Remove</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state glass-card">No project added yet.</div>
+      {% endif %}
+    </section>
+
+    <section>
+      <div class="section-heading flex-heading compact !mb-6">
+        <div><span>Writing / External Links</span><h2>{{ posts|length }} synced item(s)</h2></div>
+      </div>
+      <div class="post-grid">
+        {% for post in posts %}
+        <div class="post-card glass-card">
+          <div class="post-placeholder">{{ post.get_platform_display }}</div>
+          <div>
+            <p>{{ post.get_platform_display }}{% if post.site_name %} · {{ post.site_name }}{% endif %}</p>
+            <a href="{{ post.url }}" target="_blank" rel="noopener" class="block"><h3>{{ post.title|default:post.url }}</h3></a>
+            {% if post.description %}<small>{{ post.description }}</small>{% endif %}
+            <div class="flex flex-wrap gap-3 mt-5">
+              <a href="{% url 'post_update' post.pk %}" class="glass-button !min-h-10 !px-4">Edit</a>
+              <a href="{% url 'post_sync' post.pk %}" class="secondary-small !min-h-10 !px-4">Sync again</a>
+              <a href="{% url 'post_delete' post.pk %}" class="danger-button small">Remove</a>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="empty-state glass-card">No writing link added yet.</div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock %}

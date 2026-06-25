@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} — {{ name }}{% endblock %}
+{% block body %}
+<nav class="page-nav">
+  <div class="page-nav-inner">
+    <a href="{% url 'home' %}#projects" class="flex items-center gap-3 text-white font-bold"><span class="ak-logo">{{ logo_text }}</span><span>Projects</span></a>
+    {% if user.is_authenticated %}
+    <div class="flex items-center gap-3 text-sm"><a href="{% url 'project_update' project.slug %}" class="glass-button">Edit</a><a href="{% url 'dashboard' %}" class="glass-button">Dashboard</a></div>
+    {% endif %}
+  </div>
+</nav>
+
+<main class="page-shell">
+  <div class="page-container">
+    <section class="grid lg:grid-cols-[1.1fr_.9fr] gap-10 items-start">
+      <div>
+        <p class="page-kicker">{{ project.project_type|default:'Project' }}</p>
+        <h1 class="page-title">{{ project.name }}</h1>
+        <p class="page-subtitle text-xl">{{ project.short_desc }}</p>
+        {% if project.detailed_description %}<div class="glass-card rounded-[32px] p-8 mt-8 text-paper/70 leading-8 whitespace-pre-line">{{ project.detailed_description }}</div>{% endif %}
+      </div>
+
+      <aside class="grid gap-5 lg:sticky lg:top-28">
+        <div class="glass-card rounded-[32px] p-7">
+          <h2 class="text-2xl font-black mb-6">Project Tracking</h2>
+          <dl class="grid gap-5 text-sm">
+            <div><dt class="text-paper/50 mb-1">Status</dt><dd class="font-bold">{{ project.get_status_display }}</dd></div>
+            {% if project.last_commit_message %}<div><dt class="text-paper/50 mb-1">Last Commit</dt><dd class="font-mono text-xs text-paper/80 leading-6">{{ project.last_commit_message }}</dd></div>{% endif %}
+            {% if project.last_commit_hash %}<div><dt class="text-paper/50 mb-1">Commit Hash</dt><dd class="font-mono text-xs text-secondarylt">{{ project.last_commit_hash }}</dd></div>{% endif %}
+            {% if project.last_commit_at %}<div><dt class="text-paper/50 mb-1">Commit Time</dt><dd>{{ project.last_commit_at|date:"M d, Y h:i A" }}</dd></div>{% endif %}
+          </dl>
+        </div>
+
+        <div class="glass-card rounded-[32px] p-7">
+          <h2 class="text-2xl font-black mb-5">Tech Stack</h2>
+          <div class="tag-list">{% for tag in project.tag_list %}<em>{{ tag }}</em>{% empty %}<span class="text-paper/60">No tech stack added.</span>{% endfor %}</div>
+        </div>
+
+        <div class="glass-card rounded-[32px] p-7">
+          <h2 class="text-2xl font-black mb-5">Links</h2>
+          <div class="flex flex-wrap gap-3">
+            {% if project.repo_url %}<a href="{{ project.repo_url }}" target="_blank" rel="noopener" class="primary-cta compact">Repository ↗</a>{% endif %}
+            {% if project.live_url %}<a href="{{ project.live_url }}" target="_blank" rel="noopener" class="glass-button">Live ↗</a>{% endif %}
+            {% if not project.repo_url and not project.live_url %}<p class="text-paper/60">No links added.</p>{% endif %}
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="mt-14">
+      <div class="section-heading flex-heading compact !mb-7"><div><span>Features</span><h2>{{ project.features.count }} tracked feature(s)</h2></div></div>
+      <div class="grid md:grid-cols-2 gap-5">
+        {% for feature in project.features.all %}
+        <div class="glass-card rounded-[28px] p-6">
+          <div class="flex items-center gap-3 mb-3"><span class="check-dot">✓</span><h3 class="text-xl font-black">{{ feature.title }}</h3></div>
+          {% if feature.details %}<p class="text-paper/60 text-sm leading-7">{{ feature.details }}</p>{% endif %}
+        </div>
+        {% empty %}
+        <div class="empty-state glass-card">No feature details added yet.</div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock %}

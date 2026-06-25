@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Update Profile — {{ name }}{% endblock %}
+{% block body %}
+<nav class="page-nav">
+  <div class="page-nav-inner">
+    <a href="{% url 'dashboard' %}" class="flex items-center gap-3 text-white font-bold"><span class="ak-logo">{{ logo_text }}</span><span>Profile Settings</span></a>
+    <div class="flex items-center gap-3 text-sm">
+      <a href="{% url 'dashboard' %}" class="glass-button">Back Dashboard</a>
+      <a href="{% url 'home' %}" class="glass-button">View Site</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page-shell">
+  <div class="page-container">
+    <section class="grid lg:grid-cols-[.85fr_1.15fr] gap-8 items-start">
+      <aside class="profile-preview-card glass-card">
+        <div class="preview-mark">{{ logo_text }}</div>
+        <p class="page-kicker !mb-3">Live Preview</p>
+        <h1>{{ name }}</h1>
+        <h2>{{ title }}</h2>
+        <p>{{ bio }}</p>
+        <div class="tag-list mt-6">
+          {% for skill in skills|slice:":8" %}<em>{{ skill }}</em>{% endfor %}
+        </div>
+      </aside>
+
+      <section>
+        <p class="page-kicker">Dynamic Content</p>
+        <h1 class="page-title">Update profile, links and professional text.</h1>
+        <p class="page-subtitle">All public content is editable from here. Keep the wording clear, business-focused and aligned with your Odoo portfolio.</p>
+
+        <form method="post" class="form-card glass-card mt-8">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="form-grid">
+            {% for field in form %}
+            <div class="form-field {% if field.name == 'bio' or field.name == 'about_long' or field.name == 'stats_text' or field.name == 'services_text' or field.name == 'focus_areas_text' or field.name == 'skills_text' %}md:col-span-2{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
+              {{ field.errors }}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="flex flex-wrap gap-4 mt-8">
+            <button type="submit" class="primary-cta compact border-0 cursor-pointer">Save Profile</button>
+            <a href="{% url 'dashboard' %}" class="glass-button">Cancel</a>
+          </div>
+        </form>
+      </section>
+    </section>
+  </div>
+</main>
+{% endblock %}

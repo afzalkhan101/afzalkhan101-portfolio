@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Delete {{ type }} — {{ name }}{% endblock %}
+{% block body %}
+<main class="relative z-10 min-h-screen flex items-center justify-center px-6 py-14">
+  <div class="w-full max-w-xl glass-card rounded-[34px] p-8 md:p-10">
+    <p class="text-red-300 text-xs font-mono tracking-widest uppercase mb-3">Delete {{ type }}</p>
+    <h1 class="text-4xl font-black tracking-tight mb-4">Are you sure?</h1>
+    <p class="text-paper/70 mb-8 leading-7">This will remove <span class="text-white font-semibold">{{ object }}</span> from your portfolio database.</p>
+    <form method="post" class="flex gap-3 flex-wrap">
+      {% csrf_token %}
+      <button type="submit" class="rounded-full bg-red-500/80 px-6 py-3 text-sm text-white hover:bg-red-500 transition">Yes, remove</button>
+      <a href="{% url 'dashboard' %}" class="glass-button">Cancel</a>
+    </form>
+  </div>
+</main>
+{% endblock %}

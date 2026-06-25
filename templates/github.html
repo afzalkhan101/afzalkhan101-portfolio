@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}GitHub — {{ name }}{% endblock %}
+{% block body %}
+<main class="page-shell flex items-center justify-center">
+  <div class="glass-card rounded-[34px] p-10 text-center max-w-xl">
+    <p class="page-kicker">GitHub</p>
+    <h1 class="text-4xl font-black mb-4">Repository activity is tracked per project.</h1>
+    <p class="text-paper/70 leading-7 mb-8">Add a public GitHub repository URL to any project and use Sync commit from the dashboard.</p>
+    <a href="{% url 'home' %}#projects" class="primary-cta compact">View Projects</a>
+  </div>
+</main>
+{% endblock %}

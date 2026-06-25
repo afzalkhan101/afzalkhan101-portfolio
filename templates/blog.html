@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Writing — {{ name }}{% endblock %}
+{% block body %}
+<main class="page-shell flex items-center justify-center">
+  <div class="glass-card rounded-[34px] p-10 text-center max-w-xl">
+    <p class="page-kicker">Writing</p>
+    <h1 class="text-4xl font-black mb-4">Writing previews live on the homepage.</h1>
+    <p class="text-paper/70 leading-7 mb-8">Add Blog, LinkedIn or portfolio update links from the dashboard and keep the public site clean and professional.</p>
+    <a href="{% url 'home' %}#posts" class="primary-cta compact">View Writing</a>
+  </div>
+</main>
+{% endblock %}

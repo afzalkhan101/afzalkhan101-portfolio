@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ name }} — Odoo Developer{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#080C16',
+            ink2: '#0E1424',
+            paper: '#F8F7FB',
+            muted: '#B8B2C7',
+            surface: 'rgba(255,255,255,.08)',
+            surface2: 'rgba(255,255,255,.13)',
+            line: 'rgba(255,255,255,.16)',
+            primary: '#714B67',
+            primarylt: '#A46A96',
+            secondary: '#017E84',
+            secondarylt: '#20D0CE',
+            odooPurple: '#714B67',
+            odooTeal: '#017E84'
+          },
+          fontFamily: {
+            display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+          },
+          boxShadow: {
+            glass: '0 24px 80px rgba(0,0,0,.35)',
+            odoo: '0 28px 90px rgba(1,126,132,.25)'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-ink text-paper font-body antialiased selection:bg-secondary/30 selection:text-paper">
+  <div class="site-aurora" aria-hidden="true"></div>
+
+  {% if messages %}
+  <div class="fixed top-24 right-4 z-[90] space-y-3 w-[calc(100%-2rem)] sm:w-auto">
+    {% for message in messages %}
+    <div class="glass-card rounded-2xl px-5 py-4 text-sm text-paper shadow-glass">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% block body %}{% endblock %}
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

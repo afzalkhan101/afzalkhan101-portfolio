@@ -1,42 +1,36 @@
-// main.js — portfolio interactions
-
-// Scroll-triggered reveal for sections
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  },
-  { threshold: 0.1 }
+// Premium portfolio interactions
+const revealItems = document.querySelectorAll(
+  '.showcase-card, .project-card, .post-card, .service-card, .focus-card, .content-panel, .skill-cloud span'
 );
 
-document.querySelectorAll('.project-card, .skill-tag').forEach((el) => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(20px)';
-  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-  observer.observe(el);
-});
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
 
-// Active nav link highlight on scroll
+  revealItems.forEach((el) => {
+    el.classList.add('reveal-item');
+    observer.observe(el);
+  });
+}
+
 const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('nav a');
+const navLinks = document.querySelectorAll('.nav-item');
 
 window.addEventListener('scroll', () => {
-  let current = '';
+  let current = 'home';
   sections.forEach((sec) => {
-    if (window.scrollY >= sec.offsetTop - 100) current = sec.id;
+    if (window.scrollY >= sec.offsetTop - 160) current = sec.id;
   });
   navLinks.forEach((link) => {
-    link.classList.toggle(
-      'text-white',
-      link.getAttribute('href') === `#${current}`
-    );
-    link.classList.toggle(
-      'text-gray-500',
-      link.getAttribute('href') !== `#${current}`
-    );
+    link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
   });
 });

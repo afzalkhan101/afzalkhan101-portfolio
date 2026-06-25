@@ -1,176 +1,249 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ name }} — Odoo Developer</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            ink: '#0a0a0f',
-            paper: '#f0eff9',
-            accent: '#7c3aed',
-            accentlt: '#a78bfa',
-            muted: '#6b7280',
-            surface: '#13121a',
-          },
-          fontFamily: {
-            display: ['Georgia', 'serif'],
-            body: ['system-ui', 'sans-serif'],
-            mono: ['ui-monospace', 'monospace'],
-          },
-        }
-      }
-    }
-  </script>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body class="bg-ink text-paper font-body antialiased">
-
-  <!-- NAV -->
-  <nav class="fixed top-0 w-full z-50 bg-ink/85 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-      <span class="font-mono text-sm text-accentlt tracking-widest">AK/</span>
-      <div class="flex gap-8 text-sm text-muted">
-        <a href="#about"    class="nav-link hover:text-paper transition-colors">About</a>
-        <a href="#skills"   class="nav-link hover:text-paper transition-colors">Skills</a>
-        <a href="#projects" class="nav-link hover:text-paper transition-colors">Projects</a>
-        <a href="#contact"  class="nav-link hover:text-paper transition-colors">Contact</a>
+{% extends "base.html" %}
+{% block title %}{{ name }} — {{ title }}{% endblock %}
+{% block body %}
+<header class="hero-shell relative overflow-hidden">
+  <nav class="portfolio-nav fixed top-0 left-0 right-0 z-50">
+    <div class="mx-auto flex h-[82px] max-w-[1760px] items-center justify-between px-5 md:px-10 xl:px-16">
+      <a href="{% url 'home' %}" class="flex items-center gap-4 group">
+        <span class="ak-logo">{{ logo_text }}</span>
+        <span class="brand-name">{{ name }}</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-10 text-[15px] font-medium text-paper/80">
+        <a href="#home" class="nav-item active">Home</a>
+        <a href="#about" class="nav-item">About</a>
+        <a href="#skills" class="nav-item">Skills</a>
+        <a href="#services" class="nav-item">Services</a>
+        <a href="#projects" class="nav-item">Projects</a>
+        <a href="#posts" class="nav-item">Writing</a>
+        <a href="#contact" class="nav-item">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="glass-button hidden sm:inline-flex">Dashboard</a>
+        {% else %}
+        <a href="{% url 'dashboard_login' %}" class="glass-button hidden sm:inline-flex">Owner Login</a>
+        {% endif %}
+        <a href="mailto:{{ email }}" class="talk-button"><span>✉</span><span class="hidden sm:inline">Let’s Talk</span></a>
       </div>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="relative min-h-screen flex flex-col justify-center max-w-5xl mx-auto px-6 pt-16 overflow-hidden">
-    <!-- ambient glow -->
-    <div class="absolute -top-32 -left-32 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+  <section id="home" class="relative mx-auto max-w-[1760px] px-5 pb-10 pt-28 md:px-10 xl:px-16">
+    <div class="hero-grid relative z-10 w-full">
+      <div class="hero-copy">
+        <div class="availability-pill"><span></span>{{ hero_badge }}</div>
+        <h1 class="hero-title">
+          {% if title_before %}<span>{{ title_before }}</span>{% endif %}
+          {% if title_highlight %}<span class="text-gradient">{{ title_highlight }}</span>{% endif %}
+          {% if title_after %}<span>{{ title_after }}</span>{% endif %}
+        </h1>
+        <div class="name-pill"><span>ERP</span>{{ name }}</div>
+        <p class="hero-bio">{{ bio }}</p>
 
-    <div class="fade-in relative z-10">
-      <p class="text-accentlt text-xs font-mono tracking-widest uppercase mb-5">
-        Open to opportunities ·  Odoo &amp; Django Developer
-      </p>
-      <h1 class="font-display text-6xl md:text-8xl leading-none tracking-tight mb-4">
-        {{ name }}
-      </h1>
-      <p class="text-xl md:text-2xl text-muted font-display mb-6">{{ title }}</p>
-      <p class="text-base text-muted max-w-2xl leading-relaxed mb-10">{{ bio }}</p>
+        <div class="hero-cta-row">
+          <a href="#projects" class="primary-cta">View Projects <span>↗</span></a>
+          <a href="#contact" class="glass-button strong">Start a Conversation</a>
+        </div>
 
-      <!-- goal badge -->
-      <div class="inline-flex items-center gap-2 border border-accentlt/30 bg-accent/10 rounded-full px-5 py-2 text-accentlt text-xs font-mono mb-10">
-        <span class="w-1.5 h-1.5 rounded-full bg-accentlt animate-pulse"></span>
-        Goal: Build a product-based software company
+        <div class="stat-row">
+          {% for stat in stats %}
+          <div class="stat-item">
+            <span class="stat-icon">{{ stat.icon }}</span>
+            <div><strong>{{ stat.value }}</strong><small>{{ stat.label }}</small></div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
 
-      <div class="flex gap-4 flex-wrap">
-        <a href="#projects"
-           class="bg-accent hover:bg-accent/80 text-white px-8 py-3 rounded-full text-sm font-medium transition-all hover:scale-105 shadow-lg shadow-accent/20">
-          View Projects
-        </a>
-        <a href="#contact"
-           class="border border-white/15 hover:border-accentlt text-paper px-8 py-3 rounded-full text-sm font-medium transition-all hover:text-accentlt">
-          Get in Touch
-        </a>
-        <a href="{{ github }}" target="_blank"
-           class="border border-white/10 hover:border-white/30 text-muted px-8 py-3 rounded-full text-sm font-medium transition-all hover:text-paper flex items-center gap-2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
+      <div class="hero-system-wrap" aria-label="Professional dashboard summary">
+        <div class="system-card glass-card">
+          <div class="system-card-header">
+            <div>
+              <span>Portfolio Console</span>
+              <strong>ERP Delivery Overview</strong>
+            </div>
+            <em>Live</em>
+          </div>
+
+          <div class="system-metrics">
+            {% for stat in stats %}
+            <div class="metric-box">
+              <span>{{ stat.label }}</span>
+              <strong>{{ stat.value }}</strong>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="system-flow">
+            {% for item in focus_areas|slice:":3" %}
+            <div class="flow-row">
+              <span class="flow-dot">{{ forloop.counter }}</span>
+              <div>
+                <strong>{{ item.label }}</strong>
+                <small>{{ item.desc }}</small>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
+
+      <aside class="hero-actions">
+        <div class="expert-card glass-card">
+          <div class="flex items-center justify-between gap-4 mb-5">
+            <div class="odoo-word"><span>o</span>doo</div>
+            <span class="expert-badge">Specialist</span>
+          </div>
+          <ul class="space-y-4">
+            {% for item in services %}
+            <li><span class="check-dot">✓</span>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="social-row">
+          <a href="{{ linkedin }}" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+          <a href="{{ github }}" target="_blank" rel="noopener" aria-label="GitHub">GH</a>
+          <a href="{{ twitter }}" target="_blank" rel="noopener" aria-label="Twitter">X</a>
+          <a href="{{ youtube }}" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+          <a href="mailto:{{ email }}" aria-label="Email">✉</a>
+        </div>
+      </aside>
     </div>
 
-    <!-- scroll hint -->
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted text-xs animate-bounce">
-      <span>scroll</span>
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 9l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="project-strip">
+      {% if projects %}
+        {% for project in projects|slice:":4" %}
+        <a href="{% url 'project_detail' project.slug %}" class="showcase-card glass-card group">
+          <div class="showcase-thumb">
+            <div class="mock-window"><span></span><span></span><span></span><div></div></div>
+            <div class="showcase-icon">{% cycle 'ERP' 'BI' 'HR' 'CRM' %}</div>
+          </div>
+          <h3>{{ project.name }}</h3>
+          <p>{{ project.project_type|default:"Business System" }}{% if project.tech_stack %} · {{ project.tech_stack|truncatechars:28 }}{% endif %}</p>
+          <span class="arrow">→</span>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="showcase-card glass-card"><div class="showcase-thumb"><div class="mock-window"><span></span><span></span><span></span><div></div></div><div class="showcase-icon">ERP</div></div><h3>ERP Workflow Suite</h3><p>Odoo · Sales, Inventory</p><span class="arrow">→</span></div>
+        <div class="showcase-card glass-card"><div class="showcase-thumb"><div class="mock-window chart"><span></span><span></span><span></span><div></div></div><div class="showcase-icon">BI</div></div><h3>Business Dashboard</h3><p>Odoo · Reporting</p><span class="arrow">→</span></div>
+        <div class="showcase-card glass-card"><div class="showcase-thumb"><div class="mock-window users"><span></span><span></span><span></span><div></div></div><div class="showcase-icon">HR</div></div><h3>HR Automation</h3><p>Odoo · Employees</p><span class="arrow">→</span></div>
+        <div class="showcase-card glass-card"><div class="showcase-thumb"><div class="mock-window crm"><span></span><span></span><span></span><div></div></div><div class="showcase-icon">CRM</div></div><h3>CRM Control</h3><p>Odoo · Pipeline</p><span class="arrow">→</span></div>
+      {% endif %}
     </div>
   </section>
+</header>
 
-  <!-- ABOUT -->
-  <section id="about" class="max-w-5xl mx-auto px-6 py-24">
-    <p class="text-accentlt text-xs font-mono tracking-widest uppercase mb-8">About Me</p>
-    <div class="grid md:grid-cols-2 gap-12 items-start">
-      <div>
-        <h2 class="font-display text-3xl md:text-4xl leading-snug mb-6">
-          Building software that solves <em class="text-accentlt not-italic">real business problems.</em>
-        </h2>
-        <p class="text-muted leading-relaxed">{{ about_long }}</p>
+<main class="relative z-10">
+  <section id="about" class="section-wrap">
+    <div class="section-heading">
+      <span>About</span>
+      <h2>Business-focused ERP engineering with clean product thinking.</h2>
+    </div>
+    <div class="grid lg:grid-cols-[1.05fr_.95fr] gap-8 items-start">
+      <div class="glass-card content-panel">
+        <p>{{ about_long }}</p>
+        <div class="mt-8 grid sm:grid-cols-3 gap-4">
+          {% for stat in stats %}
+          <div class="mini-stat"><strong>{{ stat.value }}</strong><span>{{ stat.label }}</span></div>
+          {% endfor %}
+        </div>
       </div>
-      <div class="space-y-4">
+      <div class="grid gap-4">
         {% for item in focus_areas %}
-        <div class="flex items-start gap-4 bg-surface border border-white/5 rounded-xl p-4">
-          <span class="text-accentlt text-lg mt-0.5">{{ item.icon }}</span>
-          <div>
-            <p class="text-sm font-medium text-paper mb-1">{{ item.label }}</p>
-            <p class="text-xs text-muted">{{ item.desc }}</p>
-          </div>
+        <div class="focus-card glass-card">
+          <span>{{ item.icon }}</span>
+          <div><h3>{{ item.label }}</h3><p>{{ item.desc }}</p></div>
         </div>
         {% endfor %}
       </div>
     </div>
   </section>
 
-  <!-- SKILLS -->
-  <section id="skills" class="max-w-5xl mx-auto px-6 pb-24">
-    <p class="text-accentlt text-xs font-mono tracking-widest uppercase mb-8">Tech Stack</p>
-    <div class="flex flex-wrap gap-3">
+  <section id="skills" class="section-wrap pt-0">
+    <div class="section-heading compact">
+      <span>Tech Stack</span>
+      <h2>Tools used to build reliable, maintainable business systems.</h2>
+    </div>
+    <div class="skill-cloud">
       {% for skill in skills %}
-      <span class="skill-tag border border-white/10 px-5 py-2 rounded-full text-sm text-muted hover:border-accentlt hover:text-accentlt transition-all cursor-default">
-        {{ skill }}
-      </span>
+      <span>{{ skill }}</span>
       {% endfor %}
     </div>
   </section>
 
-  <!-- PROJECTS -->
-  <section id="projects" class="max-w-5xl mx-auto px-6 pb-28">
-    <p class="text-accentlt text-xs font-mono tracking-widest uppercase mb-8">Projects</p>
-    <div class="grid md:grid-cols-3 gap-6">
+  <section id="services" class="section-wrap pt-0">
+    <div class="section-heading compact">
+      <span>Services</span>
+      <h2>Practical services for companies that need scalable ERP workflows.</h2>
+    </div>
+    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
+      {% for item in services %}
+      <div class="service-card glass-card"><span>0{{ forloop.counter }}</span><h3>{{ item }}</h3><p>Structured requirements, clean implementation, responsive UI and maintainable business logic.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="projects" class="section-wrap pt-0">
+    <div class="section-heading flex-heading">
+      <div><span>Projects</span><h2>Dynamic project showcase</h2></div>
+      {% if user.is_authenticated %}<a href="{% url 'project_create' %}" class="primary-small">+ Add Project</a>{% endif %}
+    </div>
+    {% if projects %}
+    <div class="project-grid">
       {% for project in projects %}
-      <a href="{{ project.link }}"
-         class="project-card group block bg-surface border border-white/8 rounded-2xl p-6 hover:border-accentlt/50 transition-all hover:-translate-y-1">
-        <div class="w-8 h-8 rounded-lg bg-accent/15 border border-accentlt/20 flex items-center justify-center mb-5 text-accentlt text-sm">
-          {{ forloop.counter }}
+      <a href="{% url 'project_detail' project.slug %}" class="project-card glass-card group">
+        <div class="project-media">
+          <div class="project-media-placeholder">{{ project.name|slice:":2" }}</div>
+          <span>{{ project.get_status_display }}</span>
         </div>
-        <h3 class="font-display text-lg mb-3 group-hover:text-accentlt transition-colors">{{ project.title }}</h3>
-        <p class="text-muted text-sm leading-relaxed mb-6">{{ project.desc }}</p>
-        <div class="flex flex-wrap gap-2">
-          {% for tag in project.tags %}
-          <span class="text-xs bg-white/5 text-muted px-3 py-1 rounded-full border border-white/5">{{ tag }}</span>
-          {% endfor %}
+        <div class="project-body">
+          <p>{{ project.project_type|default:"Project" }}</p>
+          <h3>{{ project.name }}</h3>
+          <small>{{ project.short_desc }}</small>
+          {% if project.last_commit_message %}<div class="commit-chip">commit: {{ project.last_commit_message|truncatechars:58 }}</div>{% endif %}
+          <div class="tag-list">{% for tag in project.tag_list %}<em>{{ tag }}</em>{% endfor %}</div>
         </div>
       </a>
       {% endfor %}
     </div>
+    {% else %}
+    <div class="empty-state glass-card">No projects yet. {% if user.is_authenticated %}<a href="{% url 'project_create' %}">Add your first one</a>.{% else %}Login to add projects dynamically.{% endif %}</div>
+    {% endif %}
   </section>
 
-  <!-- CONTACT -->
-  <section id="contact" class="max-w-5xl mx-auto px-6 py-20 pb-32 text-center">
-    <p class="text-accentlt text-xs font-mono tracking-widest uppercase mb-6">Contact</p>
-    <h2 class="font-display text-4xl md:text-5xl mb-6">Let's build something great.</h2>
-    <p class="text-muted mb-10 max-w-md mx-auto text-sm leading-relaxed">
-      Whether it's an Odoo module, a Django app, or a product idea — I'm always open to exciting collaborations.
-    </p>
-    <div class="flex gap-4 justify-center flex-wrap">
-      <a href="mailto:{{ email }}"
-         class="bg-accent hover:bg-accent/80 text-white px-10 py-4 rounded-full font-medium transition-all hover:scale-105 text-sm shadow-lg shadow-accent/20">
-        {{ email }}
+  <section id="posts" class="section-wrap pt-0">
+    <div class="section-heading flex-heading">
+      <div><span>Writing / Updates</span><h2>Professional notes, posts and external links.</h2></div>
+      {% if user.is_authenticated %}<a href="{% url 'post_create' %}" class="secondary-small">+ Paste Link</a>{% endif %}
+    </div>
+    {% if posts %}
+    <div class="post-grid">
+      {% for post in posts %}
+      <a href="{{ post.url }}" target="_blank" rel="noopener" class="post-card glass-card group">
+        <div class="post-placeholder">{{ post.get_platform_display }}</div>
+        <div><p>{{ post.get_platform_display }}{% if post.site_name %} · {{ post.site_name }}{% endif %}</p><h3>{{ post.title|default:post.url }}</h3>{% if post.description %}<small>{{ post.description }}</small>{% endif %}</div>
       </a>
-      <a href="{{ linkedin }}" target="_blank"
-         class="border border-white/15 hover:border-accentlt text-muted hover:text-accentlt px-10 py-4 rounded-full text-sm font-medium transition-all">
-        LinkedIn ↗
-      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state glass-card">No writing or external posts added yet. {% if user.is_authenticated %}<a href="{% url 'post_create' %}">Paste your first link</a>.{% endif %}</div>
+    {% endif %}
+  </section>
+
+  <section id="contact" class="section-wrap pt-0 pb-24 text-center">
+    <div class="contact-panel glass-card">
+      <span>Contact</span>
+      <h2>Let’s build a system that works beautifully.</h2>
+      <p>Available for Odoo modules, ERP implementation, dashboard development, integrations and practical business automation.</p>
+      <div class="flex justify-center gap-4 flex-wrap mt-8">
+        <a href="mailto:{{ email }}" class="primary-cta compact">{{ email }}</a>
+        <a href="{{ linkedin }}" target="_blank" rel="noopener" class="glass-button">LinkedIn ↗</a>
+      </div>
     </div>
   </section>
+</main>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-white/5 py-8 text-center text-muted text-xs">
-    © 2026 {{ name }} · Aspiring Odoo Developer · Built with Django &amp; Tailwind CSS
-  </footer>
-
-  <script src="{% static 'js/main.js' %}"></script>
-</body>
-</html>
+<footer class="relative z-10 border-t border-white/10 py-8 text-center text-sm text-paper/60">
+  © 2026 {{ name }} · {{ title }} · Built with Django
+</footer>
+{% endblock %}

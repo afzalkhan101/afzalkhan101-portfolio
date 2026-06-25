@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ mode }} Post — {{ name }}{% endblock %}
+{% block body %}
+<nav class="page-nav"><div class="page-nav-inner"><a href="{% url 'dashboard' %}" class="flex items-center gap-3 text-white font-bold"><span class="ak-logo">{{ logo_text }}</span><span>Back to Dashboard</span></a><a href="{% url 'home' %}" class="glass-button">View Site</a></div></nav>
+<main class="page-shell">
+  <div class="page-container max-w-4xl">
+    <div class="mb-10">
+      <p class="page-kicker">{{ mode }} Writing Link</p>
+      <h1 class="page-title">Add a professional post or external link</h1>
+      <p class="page-subtitle">Only the URL is required. The system can sync title and description when metadata is available. The public design uses clean text cards without photos.</p>
+    </div>
+
+    <form method="post" class="glass-card form-card space-y-7">
+      {% csrf_token %}
+      <div class="form-grid">
+        {% for field in form %}
+        <div class="form-field {% if field.name == 'description' %}md:col-span-2{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
+          {% for error in field.errors %}<p class="errorlist">{{ error }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="flex gap-3 pt-3 flex-wrap">
+        <button class="primary-cta compact" type="submit">Save Link</button>
+        <a href="{% url 'dashboard' %}" class="glass-button">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

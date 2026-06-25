@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Owner Login — {{ name }}{% endblock %}
+{% block body %}
+<main class="relative z-10 min-h-screen flex items-center justify-center px-6 py-14">
+  <div class="w-full max-w-md glass-card rounded-[34px] p-8 md:p-10">
+    <a href="{% url 'home' %}" class="inline-flex mb-8 text-sm text-paper/70 hover:text-secondarylt">← Back to site</a>
+    <p class="page-kicker">Owner Login</p>
+    <h1 class="text-4xl font-black tracking-tight mb-8">Manage portfolio</h1>
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="form-field"><label for="{{ form.username.id_for_label }}">Username</label>{{ form.username }}</div>
+      <div class="form-field"><label for="{{ form.password.id_for_label }}">Password</label>{{ form.password }}</div>
+      <button type="submit" class="primary-cta compact w-full">Login</button>
+    </form>
+  </div>
+</main>
+<script>
+  document.querySelectorAll('input').forEach((input) => {
+    input.className = 'w-full rounded-xl bg-ink border border-line px-4 py-3 text-paper placeholder-muted focus:border-secondary focus:ring-2 focus:ring-secondary/20 outline-none transition';
+  });
+</script>
+{% endblock %}

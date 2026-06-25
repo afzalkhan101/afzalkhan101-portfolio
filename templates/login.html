@@ -1,23 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Owner Login — {{ name }}{% endblock %}
+
 {% block body %}
-<main class="relative z-10 min-h-screen flex items-center justify-center px-6 py-14">
-  <div class="w-full max-w-md glass-card rounded-[34px] p-8 md:p-10">
-    <a href="{% url 'home' %}" class="inline-flex mb-8 text-sm text-paper/70 hover:text-secondarylt">← Back to site</a>
-    <p class="page-kicker">Owner Login</p>
-    <h1 class="text-4xl font-black tracking-tight mb-8">Manage portfolio</h1>
-    <form method="post" class="space-y-5">
-      {% csrf_token %}
-      {{ form.non_field_errors }}
-      <div class="form-field"><label for="{{ form.username.id_for_label }}">Username</label>{{ form.username }}</div>
-      <div class="form-field"><label for="{{ form.password.id_for_label }}">Password</label>{{ form.password }}</div>
-      <button type="submit" class="primary-cta compact w-full">Login</button>
-    </form>
+<main class="relative z-10 min-h-screen flex items-center justify-center px-6 py-20">
+  <div style="width:100%;max-width:420px;">
+
+    <!-- Back link -->
+    <a href="{% url 'home' %}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#6B7280;text-decoration:none;margin-bottom:32px;transition:color .15s;" onmouseover="this.style.color='#A78BFA'" onmouseout="this.style.color='#6B7280'">
+      ← Back to site
+    </a>
+
+    <div class="glass" style="padding:36px;">
+      <!-- Logo -->
+      <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#7C3AED,#0EA5E9);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;margin-bottom:24px;">
+        {{ logo_text }}
+      </div>
+
+      <p class="kicker" style="margin-bottom:10px;">Owner Access</p>
+      <h1 style="font-size:28px;font-weight:800;color:#F3F4F6;letter-spacing:-.02em;margin-bottom:8px;">Sign in to manage<br>your portfolio</h1>
+      <p style="font-size:13px;color:#6B7280;margin-bottom:28px;">Enter your credentials to access the dashboard.</p>
+
+      <form method="post" style="display:flex;flex-direction:column;gap:18px;">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:12px 16px;font-size:13px;color:#FCA5A5;">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div>
+          <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+          <input class="form-input" id="{{ form.username.id_for_label }}" type="text" name="{{ form.username.html_name }}" value="{{ form.username.value|default:'' }}" placeholder="your-username" autocomplete="username">
+          {% for error in form.username.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+          <input class="form-input" id="{{ form.password.id_for_label }}" type="password" name="{{ form.password.html_name }}" placeholder="••••••••" autocomplete="current-password">
+          {% for error in form.password.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:4px;">Sign in to Dashboard</button>
+      </form>
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:#4B5563;margin-top:20px;">
+      Portfolio of {{ name }} · Protected area
+    </p>
   </div>
 </main>
-<script>
-  document.querySelectorAll('input').forEach((input) => {
-    input.className = 'w-full rounded-xl bg-ink border border-line px-4 py-3 text-paper placeholder-muted focus:border-secondary focus:ring-2 focus:ring-secondary/20 outline-none transition';
-  });
-</script>
 {% endblock %}

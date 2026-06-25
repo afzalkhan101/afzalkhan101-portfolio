@@ -1,16 +1,35 @@
 {% extends "base.html" %}
 {% block title %}Delete {{ type }} — {{ name }}{% endblock %}
+
 {% block body %}
-<main class="relative z-10 min-h-screen flex items-center justify-center px-6 py-14">
-  <div class="w-full max-w-xl glass-card rounded-[34px] p-8 md:p-10">
-    <p class="text-red-300 text-xs font-mono tracking-widest uppercase mb-3">Delete {{ type }}</p>
-    <h1 class="text-4xl font-black tracking-tight mb-4">Are you sure?</h1>
-    <p class="text-paper/70 mb-8 leading-7">This will remove <span class="text-white font-semibold">{{ object }}</span> from your portfolio database.</p>
-    <form method="post" class="flex gap-3 flex-wrap">
-      {% csrf_token %}
-      <button type="submit" class="rounded-full bg-red-500/80 px-6 py-3 text-sm text-white hover:bg-red-500 transition">Yes, remove</button>
-      <a href="{% url 'dashboard' %}" class="glass-button">Cancel</a>
-    </form>
+<main class="relative z-10 min-h-screen flex items-center justify-center px-6 py-20">
+  <div style="width:100%;max-width:460px;">
+
+    <div class="glass" style="padding:36px;">
+      <!-- Warning icon -->
+      <div style="width:48px;height:48px;border-radius:14px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:24px;">⚠</div>
+
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF4444;margin-bottom:10px;">Delete {{ type }}</p>
+      <h1 style="font-size:26px;font-weight:800;color:#F3F4F6;letter-spacing:-.02em;margin-bottom:12px;">Are you sure?</h1>
+      <p style="font-size:14px;color:#6B7280;line-height:1.7;margin-bottom:28px;">
+        This will permanently remove
+        <span style="color:#F3F4F6;font-weight:600;">{{ object }}</span>
+        from your portfolio database. This action cannot be undone.
+      </p>
+
+      <div style="padding:14px 16px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.12);border-radius:12px;margin-bottom:24px;">
+        <p style="font-size:13px;color:#FCA5A5;">⚠ Deleted items cannot be recovered.</p>
+      </div>
+
+      <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;">
+        {% csrf_token %}
+        <button type="submit" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;background:rgba(239,68,68,.85);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(239,68,68,1)'" onmouseout="this.style.background='rgba(239,68,68,.85)'">
+          Yes, remove it
+        </button>
+        <a href="{% url 'dashboard' %}" class="btn-ghost">Cancel</a>
+      </form>
+    </div>
+
   </div>
 </main>
 {% endblock %}

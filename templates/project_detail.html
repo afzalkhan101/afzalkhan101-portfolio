@@ -1,65 +1,150 @@
 {% extends "base.html" %}
 {% block title %}{{ project.name }} — {{ name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .detail-hero { padding: 32px 24px 0; max-width: 1200px; margin: 0 auto; }
+  .detail-grid { display: grid; gap: 28px; align-items: start; }
+  @media(min-width:1024px){ .detail-grid { grid-template-columns: 1fr 360px; } }
+  .detail-desc { color: #9CA3AF; line-height: 1.85; font-size: 15px; white-space: pre-line; }
+  .sidebar-card { padding: 24px; }
+  .sidebar-card + .sidebar-card { margin-top: 14px; }
+  .sidebar-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #6B7280; margin-bottom: 6px; display: block; }
+  .sidebar-val { font-size: 14px; color: #E5E7EB; font-weight: 600; }
+  .feature-grid { display: grid; gap: 14px; margin-top: 40px; }
+  @media(min-width:640px){ .feature-grid { grid-template-columns: 1fr 1fr; } }
+  .feature-card { padding: 20px 22px; display: flex; align-items: flex-start; gap: 12px; }
+  .feature-check { width: 22px; height: 22px; border-radius: 8px; background: rgba(13,148,136,.12); border: 1px solid rgba(13,148,136,.25); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #2DD4BF; flex-shrink: 0; margin-top: 1px; }
+  .feature-card h3 { font-size: 15px; font-weight: 700; color: #F3F4F6; margin-bottom: 4px; }
+  .feature-card p { font-size: 13px; color: #6B7280; line-height: 1.65; }
+  .mono-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #2DD4BF; }
+</style>
+{% endblock %}
+
 {% block body %}
-<nav class="page-nav">
-  <div class="page-nav-inner">
-    <a href="{% url 'home' %}#projects" class="flex items-center gap-3 text-white font-bold"><span class="ak-logo">{{ logo_text }}</span><span>Projects</span></a>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="{% url 'home' %}#projects" class="flex items-center gap-3 no-underline">
+      <span style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#0EA5E9);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;">{{ logo_text }}</span>
+      <span style="font-size:15px;font-weight:700;color:#6B7280;">Projects</span>
+      <span style="color:#4B5563;">/</span>
+      <span style="font-size:15px;font-weight:600;color:#F3F4F6;">{{ project.name|truncatechars:30 }}</span>
+    </a>
     {% if user.is_authenticated %}
-    <div class="flex items-center gap-3 text-sm"><a href="{% url 'project_update' project.slug %}" class="glass-button">Edit</a><a href="{% url 'dashboard' %}" class="glass-button">Dashboard</a></div>
+    <div class="flex items-center gap-3">
+      <a href="{% url 'project_update' project.slug %}" class="btn-ghost sm">Edit Project</a>
+      <a href="{% url 'dashboard' %}" class="btn-ghost sm">Dashboard</a>
+    </div>
     {% endif %}
   </div>
 </nav>
 
 <main class="page-shell">
   <div class="page-container">
-    <section class="grid lg:grid-cols-[1.1fr_.9fr] gap-10 items-start">
+
+    <div class="detail-grid">
+
+      <!-- Left: main content -->
       <div>
-        <p class="page-kicker">{{ project.project_type|default:'Project' }}</p>
-        <h1 class="page-title">{{ project.name }}</h1>
-        <p class="page-subtitle text-xl">{{ project.short_desc }}</p>
-        {% if project.detailed_description %}<div class="glass-card rounded-[32px] p-8 mt-8 text-paper/70 leading-8 whitespace-pre-line">{{ project.detailed_description }}</div>{% endif %}
-      </div>
+        <p class="kicker" style="margin-bottom:12px;">{{ project.project_type|default:'Project' }}</p>
+        <h1 style="font-size:clamp(28px,4vw,48px);font-weight:900;color:#F3F4F6;letter-spacing:-.02em;line-height:1.1;margin-bottom:14px;">{{ project.name }}</h1>
+        <p style="font-size:17px;color:#6B7280;line-height:1.7;margin-bottom:32px;">{{ project.short_desc }}</p>
 
-      <aside class="grid gap-5 lg:sticky lg:top-28">
-        <div class="glass-card rounded-[32px] p-7">
-          <h2 class="text-2xl font-black mb-6">Project Tracking</h2>
-          <dl class="grid gap-5 text-sm">
-            <div><dt class="text-paper/50 mb-1">Status</dt><dd class="font-bold">{{ project.get_status_display }}</dd></div>
-            {% if project.last_commit_message %}<div><dt class="text-paper/50 mb-1">Last Commit</dt><dd class="font-mono text-xs text-paper/80 leading-6">{{ project.last_commit_message }}</dd></div>{% endif %}
-            {% if project.last_commit_hash %}<div><dt class="text-paper/50 mb-1">Commit Hash</dt><dd class="font-mono text-xs text-secondarylt">{{ project.last_commit_hash }}</dd></div>{% endif %}
-            {% if project.last_commit_at %}<div><dt class="text-paper/50 mb-1">Commit Time</dt><dd>{{ project.last_commit_at|date:"M d, Y h:i A" }}</dd></div>{% endif %}
-          </dl>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;">
+          <span class="pill pill-{% if project.status == 'active' %}green{% elif project.status == 'completed' %}blue{% else %}amber{% endif %}">{{ project.get_status_display }}</span>
+          {% if project.project_type %}<span class="pill pill-purple">{{ project.project_type }}</span>{% endif %}
         </div>
 
-        <div class="glass-card rounded-[32px] p-7">
-          <h2 class="text-2xl font-black mb-5">Tech Stack</h2>
-          <div class="tag-list">{% for tag in project.tag_list %}<em>{{ tag }}</em>{% empty %}<span class="text-paper/60">No tech stack added.</span>{% endfor %}</div>
+        {% if project.detailed_description %}
+        <div class="glass" style="padding:28px;">
+          <p class="detail-desc">{{ project.detailed_description }}</p>
         </div>
+        {% endif %}
 
-        <div class="glass-card rounded-[32px] p-7">
-          <h2 class="text-2xl font-black mb-5">Links</h2>
-          <div class="flex flex-wrap gap-3">
-            {% if project.repo_url %}<a href="{{ project.repo_url }}" target="_blank" rel="noopener" class="primary-cta compact">Repository ↗</a>{% endif %}
-            {% if project.live_url %}<a href="{{ project.live_url }}" target="_blank" rel="noopener" class="glass-button">Live ↗</a>{% endif %}
-            {% if not project.repo_url and not project.live_url %}<p class="text-paper/60">No links added.</p>{% endif %}
+        <!-- Features -->
+        <div style="margin-top:48px;">
+          <p class="kicker" style="margin-bottom:12px;">Features</p>
+          <h2 style="font-size:22px;font-weight:700;color:#F3F4F6;margin-bottom:20px;">{{ project.features.count }} tracked feature{{ project.features.count|pluralize }}</h2>
+          <div class="feature-grid">
+            {% for feature in project.features.all %}
+            <div class="glass feature-card">
+              <div class="feature-check">✓</div>
+              <div>
+                <h3>{{ feature.title }}</h3>
+                {% if feature.details %}<p>{{ feature.details }}</p>{% endif %}
+              </div>
+            </div>
+            {% empty %}
+            <div class="glass empty-state" style="grid-column:1/-1;">No feature details added yet.</div>
+            {% endfor %}
           </div>
         </div>
-      </aside>
-    </section>
-
-    <section class="mt-14">
-      <div class="section-heading flex-heading compact !mb-7"><div><span>Features</span><h2>{{ project.features.count }} tracked feature(s)</h2></div></div>
-      <div class="grid md:grid-cols-2 gap-5">
-        {% for feature in project.features.all %}
-        <div class="glass-card rounded-[28px] p-6">
-          <div class="flex items-center gap-3 mb-3"><span class="check-dot">✓</span><h3 class="text-xl font-black">{{ feature.title }}</h3></div>
-          {% if feature.details %}<p class="text-paper/60 text-sm leading-7">{{ feature.details }}</p>{% endif %}
-        </div>
-        {% empty %}
-        <div class="empty-state glass-card">No feature details added yet.</div>
-        {% endfor %}
       </div>
-    </section>
+
+      <!-- Right: sidebar -->
+      <aside style="position:sticky;top:88px;display:flex;flex-direction:column;gap:14px;">
+
+        <!-- Tracking -->
+        <div class="glass sidebar-card">
+          <h2 style="font-size:17px;font-weight:700;color:#F3F4F6;margin-bottom:18px;">Project Tracking</h2>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div>
+              <span class="sidebar-label">Status</span>
+              <span class="sidebar-val">{{ project.get_status_display }}</span>
+            </div>
+            {% if project.last_commit_message %}
+            <div>
+              <span class="sidebar-label">Last Commit</span>
+              <p class="mono-val" style="font-size:12px;margin-top:2px;line-height:1.6;">{{ project.last_commit_message }}</p>
+            </div>
+            {% endif %}
+            {% if project.last_commit_hash %}
+            <div>
+              <span class="sidebar-label">Commit Hash</span>
+              <span class="mono-val">{{ project.last_commit_hash }}</span>
+            </div>
+            {% endif %}
+            {% if project.last_commit_at %}
+            <div>
+              <span class="sidebar-label">Commit Time</span>
+              <span class="sidebar-val" style="font-weight:500;color:#9CA3AF;">{{ project.last_commit_at|date:"M d, Y · h:i A" }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="glass sidebar-card">
+          <h2 style="font-size:17px;font-weight:700;color:#F3F4F6;margin-bottom:14px;">Tech Stack</h2>
+          <div class="tag-list">
+            {% for tag in project.tag_list %}
+            <span class="tag">{{ tag }}</span>
+            {% empty %}
+            <span style="font-size:13px;color:#6B7280;">No tech stack added.</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div class="glass sidebar-card">
+          <h2 style="font-size:17px;font-weight:700;color:#F3F4F6;margin-bottom:14px;">Links</h2>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            {% if project.repo_url %}
+            <a href="{{ project.repo_url }}" target="_blank" rel="noopener" class="btn-primary sm" style="justify-content:center;">Repository ↗</a>
+            {% endif %}
+            {% if project.live_url %}
+            <a href="{{ project.live_url }}" target="_blank" rel="noopener" class="btn-ghost sm" style="justify-content:center;">Live Demo ↗</a>
+            {% endif %}
+            {% if not project.repo_url and not project.live_url %}
+            <p style="font-size:13px;color:#6B7280;">No links added.</p>
+            {% endif %}
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
   </div>
 </main>
 {% endblock %}

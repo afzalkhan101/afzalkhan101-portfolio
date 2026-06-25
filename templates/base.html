@@ -5,59 +5,242 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}{{ name }} — Odoo Developer{% endblock %}</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            ink: '#080C16',
-            ink2: '#0E1424',
-            paper: '#F8F7FB',
-            muted: '#B8B2C7',
-            surface: 'rgba(255,255,255,.08)',
-            surface2: 'rgba(255,255,255,.13)',
-            line: 'rgba(255,255,255,.16)',
-            primary: '#714B67',
-            primarylt: '#A46A96',
-            secondary: '#017E84',
-            secondarylt: '#20D0CE',
-            odooPurple: '#714B67',
-            odooTeal: '#017E84'
+            canvas:   '#07090F',
+            surface:  '#0D1120',
+            card:     '#111827',
+            border:   'rgba(255,255,255,0.07)',
+            muted:    '#6B7280',
+            soft:     '#9CA3AF',
+            paper:    '#F3F4F6',
+            primary:  '#7C3AED',
+            prlight:  '#A78BFA',
+            accent:   '#0EA5E9',
+            aclight:  '#7DD3FC',
+            teal:     '#0D9488',
+            teallg:   '#2DD4BF',
           },
           fontFamily: {
             display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            body: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+            body:    ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono:    ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
+          borderRadius: {
+            card: '20px',
+            pill: '999px',
           },
           boxShadow: {
-            glass: '0 24px 80px rgba(0,0,0,.35)',
-            odoo: '0 28px 90px rgba(1,126,132,.25)'
-          }
+            card:  '0 1px 3px rgba(0,0,0,.4), 0 8px 32px rgba(0,0,0,.25)',
+            glow:  '0 0 40px rgba(124,58,237,.18)',
+            teal:  '0 0 40px rgba(13,148,136,.18)',
+          },
         }
       }
     }
   </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <style>
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-size: 16px; }
+    body { background: #07090F; color: #F3F4F6; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* ── Ambient glow layer ── */
+    .bg-ambient {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(124,58,237,.09) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 90%, rgba(13,148,136,.07) 0%, transparent 70%);
+    }
+
+    /* ── Glass card ── */
+    .glass {
+      background: rgba(17,24,39,.65);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .glass-sm { border-radius: 14px; }
+
+    /* ── Gradient text ── */
+    .text-grad {
+      background: linear-gradient(135deg, #A78BFA 0%, #7DD3FC 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .text-grad-teal {
+      background: linear-gradient(135deg, #2DD4BF 0%, #38BDF8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 999px;
+      background: linear-gradient(135deg, #7C3AED, #0EA5E9);
+      color: #fff; font-size: 14px; font-weight: 600;
+      transition: opacity .2s, transform .2s; cursor: pointer; border: none; text-decoration: none;
+    }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary.sm { padding: 9px 18px; font-size: 13px; }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: #D1D5DB; font-size: 14px; font-weight: 500;
+      transition: background .2s, border-color .2s, transform .2s; text-decoration: none;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.18); transform: translateY(-1px); }
+    .btn-ghost.sm { padding: 8px 16px; font-size: 13px; }
+
+    .btn-danger {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: 999px;
+      background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25);
+      color: #FCA5A5; font-size: 13px; font-weight: 500;
+      transition: background .2s; text-decoration: none;
+    }
+    .btn-danger:hover { background: rgba(239,68,68,.22); }
+
+    .btn-teal {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: 999px;
+      background: rgba(13,148,136,.15); border: 1px solid rgba(13,148,136,.3);
+      color: #2DD4BF; font-size: 13px; font-weight: 500;
+      transition: background .2s; text-decoration: none;
+    }
+    .btn-teal:hover { background: rgba(13,148,136,.25); }
+
+    /* ── Section kicker / label ── */
+    .kicker {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: #A78BFA;
+    }
+    .kicker::before {
+      content: ''; display: block; width: 20px; height: 2px;
+      background: linear-gradient(90deg, #7C3AED, #0EA5E9); border-radius: 2px;
+    }
+
+    /* ── Section heading ── */
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px); font-weight: 800;
+      color: #F3F4F6; line-height: 1.15; letter-spacing: -.02em;
+    }
+
+    /* ── Status / type pills ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    }
+    .pill-purple { background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3); color: #A78BFA; }
+    .pill-teal   { background: rgba(13,148,136,.15);  border: 1px solid rgba(13,148,136,.3);  color: #2DD4BF; }
+    .pill-blue   { background: rgba(14,165,233,.12);  border: 1px solid rgba(14,165,233,.28); color: #7DD3FC; }
+    .pill-green  { background: rgba(16,185,129,.12);  border: 1px solid rgba(16,185,129,.28); color: #6EE7B7; }
+    .pill-amber  { background: rgba(245,158,11,.12);  border: 1px solid rgba(245,158,11,.28); color: #FCD34D; }
+    .pill-red    { background: rgba(239,68,68,.12);   border: 1px solid rgba(239,68,68,.28);  color: #FCA5A5; }
+
+    /* ── Tag list ── */
+    .tag { display: inline-flex; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 500; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09); color: #9CA3AF; }
+
+    /* ── Form fields ── */
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: #9CA3AF; margin-bottom: 6px; letter-spacing: .01em; }
+    .form-input {
+      width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.10);
+      border-radius: 12px; padding: 11px 16px; color: #F3F4F6; font-size: 14px; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-input:focus { border-color: rgba(124,58,237,.6); box-shadow: 0 0 0 3px rgba(124,58,237,.12); }
+    .form-input::placeholder { color: #4B5563; }
+    textarea.form-input { resize: vertical; min-height: 100px; }
+    .form-help { font-size: 12px; color: #6B7280; margin-top: 5px; }
+    .form-error { font-size: 12px; color: #FCA5A5; margin-top: 5px; }
+
+    /* ── Nav ── */
+    .site-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      height: 68px;
+      background: rgba(7,9,15,.80);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .nav-inner { max-width: 1400px; margin: 0 auto; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+    .nav-link { font-size: 14px; font-weight: 500; color: #9CA3AF; text-decoration: none; transition: color .15s; padding: 4px 0; position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,#7C3AED,#0EA5E9); border-radius: 2px; transform: scaleX(0); transition: transform .2s; }
+    .nav-link:hover, .nav-link.active { color: #F3F4F6; }
+    .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+
+    /* ── Page shell for inner pages ── */
+    .page-shell { padding-top: 100px; padding-bottom: 80px; position: relative; z-index: 1; }
+    .page-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Page header (inner pages) ── */
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: clamp(28px,4vw,44px); font-weight: 800; color: #F3F4F6; letter-spacing:-.02em; margin-top: 10px; }
+    .page-header p { font-size: 15px; color: #6B7280; margin-top: 10px; line-height: 1.7; max-width: 600px; }
+
+    /* ── Commit chip ── */
+    .commit-chip { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6B7280; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 8px; padding: 5px 10px; margin-top: 8px; display: inline-block; }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 48px 24px; color: #6B7280; font-size: 14px; }
+    .empty-state a { color: #A78BFA; text-decoration: underline; }
+
+    /* ── Toast / message ── */
+    .toast { background: rgba(17,24,39,.95); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 14px 20px; font-size: 14px; color: #F3F4F6; box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: rgba(255,255,255,.06); margin: 0; }
+
+    /* ── Availability dot ── */
+    .dot-live { width: 7px; height: 7px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px rgba(16,185,129,.6); display: inline-block; animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 6px; }
+
+    /* ── Focus ring ── */
+    a:focus-visible, button:focus-visible { outline: 2px solid #7C3AED; outline-offset: 3px; border-radius: 6px; }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+
   {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-ink text-paper font-body antialiased selection:bg-secondary/30 selection:text-paper">
-  <div class="site-aurora" aria-hidden="true"></div>
+<body>
+  <div class="bg-ambient" aria-hidden="true"></div>
 
   {% if messages %}
-  <div class="fixed top-24 right-4 z-[90] space-y-3 w-[calc(100%-2rem)] sm:w-auto">
+  <div class="fixed top-20 right-5 z-[100] space-y-3 w-[calc(100%-40px)] sm:w-auto sm:max-w-sm">
     {% for message in messages %}
-    <div class="glass-card rounded-2xl px-5 py-4 text-sm text-paper shadow-glass">
-      {{ message }}
-    </div>
+    <div class="toast">{{ message }}</div>
     {% endfor %}
   </div>
   {% endif %}
 
   {% block body %}{% endblock %}
+
   <script src="{% static 'js/main.js' %}"></script>
+  <script>
+    // Auto-dismiss toasts
+    document.querySelectorAll('.toast').forEach(t => {
+      setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 4000);
+    });
+  </script>
 </body>
 </html>

@@ -1,32 +1,60 @@
 {% extends "base.html" %}
 {% block title %}{{ mode }} Project — {{ name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .form-grid { display: grid; gap: 20px; }
+  @media(min-width:768px){ .form-grid { grid-template-columns: 1fr 1fr; } }
+  .col-span-2 { grid-column: 1 / -1; }
+</style>
+{% endblock %}
+
 {% block body %}
-<nav class="page-nav"><div class="page-nav-inner"><a href="{% url 'dashboard' %}" class="flex items-center gap-3 text-white font-bold"><span class="ak-logo">{{ logo_text }}</span><span>Back to Dashboard</span></a><a href="{% url 'home' %}" class="glass-button">View Site</a></div></nav>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="{% url 'dashboard' %}" class="flex items-center gap-3 no-underline">
+      <span style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#0EA5E9);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;">{{ logo_text }}</span>
+      <span style="font-size:15px;font-weight:600;color:#6B7280;">Dashboard</span>
+      <span style="color:#4B5563;">/</span>
+      <span style="font-size:15px;font-weight:700;color:#F3F4F6;">{{ mode }} Project</span>
+    </a>
+    <a href="{% url 'home' %}" class="btn-ghost sm">View Site</a>
+  </div>
+</nav>
+
 <main class="page-shell">
-  <div class="page-container max-w-5xl">
-    <div class="mb-10">
-      <p class="page-kicker">{{ mode }} Project</p>
-      <h1 class="page-title">Project details</h1>
-      <p class="page-subtitle">Name, feature details, tech stack, repository/live link and last commit information stay organized here.</p>
+  <div class="page-container" style="max-width:900px;">
+
+    <div class="page-header">
+      <p class="kicker">{{ mode }} Project</p>
+      <h1>Project details</h1>
+      <p>Name, feature details, tech stack, repository / live link and commit information stay organized here.</p>
     </div>
 
-    <form method="post" class="glass-card form-card space-y-7">
+    <form method="post" class="glass" style="padding:32px;">
       {% csrf_token %}
       <div class="form-grid">
         {% for field in form %}
-        <div class="form-field {% if field.name == 'detailed_description' or field.name == 'features_text' %}md:col-span-2{% endif %}">
-          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-          {{ field }}
-          {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
-          {% for error in field.errors %}<p class="errorlist">{{ error }}</p>{% endfor %}
+        <div class="{% if field.name == 'detailed_description' or field.name == 'features_text' %}col-span-2{% endif %}">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% if field.field.widget.input_type == 'textarea' or field.field.widget|stringformat:"s" contains "Textarea" %}
+            <textarea class="form-input" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}" rows="{% if field.name == 'detailed_description' or field.name == 'features_text' %}6{% else %}3{% endif %}">{{ field.value|default:'' }}</textarea>
+          {% else %}
+            <input class="form-input" id="{{ field.id_for_label }}" type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.html_name }}" value="{{ field.value|default:'' }}" placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+          {% endif %}
+          {% if field.help_text %}<p class="form-help">{{ field.help_text }}</p>{% endif %}
+          {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
         </div>
         {% endfor %}
       </div>
-      <div class="flex gap-3 pt-3 flex-wrap">
-        <button class="primary-cta compact" type="submit">Save Project</button>
-        <a href="{% url 'dashboard' %}" class="glass-button">Cancel</a>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06);">
+        <button type="submit" class="btn-primary">Save Project</button>
+        <a href="{% url 'dashboard' %}" class="btn-ghost">Cancel</a>
       </div>
     </form>
+
   </div>
 </main>
 {% endblock %}

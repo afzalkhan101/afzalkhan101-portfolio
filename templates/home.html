@@ -128,6 +128,24 @@
 
   /* ── Footer ── */
   .site-footer { position: relative; z-index: 1; padding: 24px; text-align: center; border-top: 1px solid rgba(255,255,255,.06); font-size: 13px; color: #4B5563; }
+   
+  .tag {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1.5px solid #4E54D0;
+    border-radius: 999px;
+    background: #07090F;
+    color: #ffffff;
+    font-weight: 500;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .tag:hover {
+      transform: translateY(-2px);
+      border-color: #6366F1; /* Optional: slightly brighter purple on hover */
+  }
+
+
 </style>
 {% endblock %}
 
@@ -315,8 +333,11 @@
   <div class="section-inner">
     <div class="section-head">
       <p class="kicker">Tech Stack</p>
-      <h2 class="section-title" style="margin-top:12px;">Tools used to build reliable,<br>maintainable business systems.</h2>
+      <h2 class="section-title" style="margin-top:12px;">
+        Tools used to build reliable,<br>maintainable business systems.
+      </h2>
     </div>
+
     <div class="skill-cloud">
       {% for skill in skills %}
       <span class="tag">{{ skill }}</span>
